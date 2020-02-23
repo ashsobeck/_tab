@@ -4,7 +4,7 @@ import os
 from os import path
 import praw
 import random
-from getspotify import getTop10
+from getspotify import getTopSongs
 from datetime import date
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -48,20 +48,22 @@ async def meme(ctx):
     #bot sends message
     await ctx.send(url_choice)
 
-@bot.command(name='top10',
-             help='Responds with top 10 songs from the daily Spotify Top 200'
+@bot.command(name='top',
+             help='Responds with top x songs from the daily Spotify Top 200'
             )
-async def top10(ctx):
-    potential_csv = 'top10' + date.strftime('%Y-%m-%d') + '.csv'
+async def top10(ctx, numsongs):
+    if numsongs > 200:
+        await ctx.send('Number must be 200 or less')
+    potential_csv = 'top-' + date.strftime('%Y-%m-%d') + '.csv'
     if (path.exists(potential_csv)):
         with open(potential_csv, 'r') as data: 
             topsongs = pd.read_csv(data)
-            await ctx.send(topsongs)
+            await ctx.send(topsongs.sample(numsongs))
     else:
-        getTop10()
+        getTopSongs()
         with open(potential_csv, 'r') as data: 
             topsongs = pd.read_csv(data)
-            await ctx.send(topsongs)
+            await ctx.send(topsongs.sample(numsongs))
 
 
 bot.run(TOKEN)
