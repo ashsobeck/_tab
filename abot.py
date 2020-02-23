@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
 import os 
+from os import path
 import praw
 import random
+from getspotify import getTop10
+from datetime import date
 from discord.ext import commands
 from dotenv import load_dotenv
+import pandas as pd
+
 
 #loads the .env file that has tokens and ids for reddit needed
 #to login to discord and reddit
@@ -42,5 +47,21 @@ async def meme(ctx):
     url_choice = random.choice(submissions)
     #bot sends message
     await ctx.send(url_choice)
+
+@bot.command(name='top10',
+             help='Responds with top 10 songs from the daily Spotify Top 200'
+            )
+async def top10(ctx):
+    potential_csv = 'top10' + date.strftime('%Y-%m-%d') + '.csv'
+    if (path.exists(potential_csv)):
+        with open(potential_csv, 'r') as data: 
+            topsongs = pd.read_csv(data)
+            await ctx.send(topsongs)
+    else:
+        getTop10()
+        with open(potential_csv, 'r') as data: 
+            topsongs = pd.read_csv(data)
+            await ctx.send(topsongs)
+
 
 bot.run(TOKEN)
