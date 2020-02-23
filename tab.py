@@ -5,7 +5,7 @@ from os import path
 import praw
 import random
 from getspotify import getTopSongs
-from datetime import date
+from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 import pandas as pd
@@ -22,7 +22,7 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 reddit = praw.Reddit(client_id=CLIENT_ID,
                      client_secret=CLIENT_SECRET,
-                     user_agent='ABot'
+                     user_agent='_tab'
                     )
 
 
@@ -52,18 +52,27 @@ async def meme(ctx):
              help='Responds with top x songs from the daily Spotify Top 200'
             )
 async def top10(ctx, numsongs):
-    if numsongs > 200:
-        await ctx.send('Number must be 200 or less')
-    potential_csv = 'top-' + date.strftime('%Y-%m-%d') + '.csv'
-    if (path.exists(potential_csv)):
-        with open(potential_csv, 'r') as data: 
-            topsongs = pd.read_csv(data)
-            await ctx.send(topsongs.sample(numsongs))
-    else:
-        getTopSongs()
-        with open(potential_csv, 'r') as data: 
-            topsongs = pd.read_csv(data)
-            await ctx.send(topsongs.sample(numsongs))
+    if int(numsongs) > 199:
+        await ctx.send('Number must be less than 200')
+    potential_csv = 'top-' + str(datetime.date(datetime.now())) + '.csv'
+    try:
+        if (path.exists(potential_csv)):
+            with open(potential_csv, 'r') as data: 
+                topsongs = pd.read_csv(data, delimiter=',',
+                           names = ['Rank', 'Artist', 'Song'],
+                           nrows=int(numsongs) 
+                           )
+                await ctx.send(topsongs)
+        else:
+            getTopSongs()
+            with open(potential_csv, 'r') as data: 
+                topsongs = pd.read_csv(data, delimiter=',', 
+                           names= ['Rank', 'Song', 'Artist'],
+                           nrows=int(numsongs)
+                           )
+                await ctx.send(topsongs)
+    except:
+        await ctx.send('Unable to process request')
 
 
 bot.run(TOKEN)

@@ -3,7 +3,7 @@
 #just returns the top 10 songs in the daily 200
 import requests
 from bs4 import BeautifulSoup 
-from datetime import date
+from datetime import datetime
 from time import time
 from time import sleep
 import pandas as pd
@@ -33,7 +33,7 @@ def getTopSongs():
   data = pd.DataFrame(bigTable, columns =['Rank', 'Title', 'Artist'])
   print(data)
 
-  with open('top-' + date.strftime('%Y-%m-%d') + '.csv', 'w') as file:
+  with open('top-' + str(datetime.date(datetime.now())) + '.csv', 'w') as file:
     data.to_csv(file, header=False, index=False)
 
 
