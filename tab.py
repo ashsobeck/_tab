@@ -8,6 +8,7 @@ from getspotify import getTopSongs
 from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
+import time
 import pandas as pd
 
 
@@ -74,5 +75,16 @@ async def top10(ctx, numsongs):
     except:
         await ctx.send('Unable to process request')
 
+
+@bot.command(name='stream',
+             help='streams the posts from r/ACTrade'
+            )
+async def streamACT(ctx):
+    start_time = time.time()
+    for submission in reddit.subreddit('ACTrade').stream.submissions():
+        if submission.created_utc < start_time:
+            continue
+        else:
+            await ctx.send(submission.url)
 
 bot.run(TOKEN)
