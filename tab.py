@@ -79,12 +79,10 @@ async def top10(ctx, numsongs):
 @bot.command(name='stream',
              help='streams the posts from r/ACTrade'
             )
-async def streamACT(ctx):
-    start_time = time.time()
-    for submission in reddit.subreddit('ACTrade').stream.submissions():
-        if submission.created_utc < start_time:
-            continue
-        else:
-            await ctx.send(submission.url)
+async def streamACT(ctx):    
+    for sub in reddit.subreddit('ACTrade').stream.submissions(skip_existing=True):
+        # if sub is None:
+        #     continue
+        await ctx.send(sub.url)
 
 bot.run(TOKEN)
