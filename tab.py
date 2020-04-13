@@ -27,7 +27,7 @@ reddit = praw.Reddit(client_id=CLIENT_ID,
                     )
 
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='$')
 
 def get_links(submissions):
     urls = []
