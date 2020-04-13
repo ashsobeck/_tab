@@ -27,7 +27,7 @@ reddit = praw.Reddit(client_id=CLIENT_ID,
                     )
 
 
-bot = commands.Bot(command_prefix='$')
+bot = commands.Bot(command_prefix='.')
 
 def get_links(submissions):
     urls = []
@@ -80,9 +80,9 @@ async def top10(ctx, numsongs):
              help='streams the posts from r/ACTrade'
             )
 async def streamACT(ctx):    
-    for sub in reddit.subreddit('ACTrade').stream.submissions(skip_existing=True):
-        # if sub is None:
-        #     continue
+    for sub in reddit.subreddit('ACTrade').stream.submissions(pause_after=6, skip_existing=True):
+        if sub is None:
+            continue
         await ctx.send(sub.url)
 
 bot.run(TOKEN)
